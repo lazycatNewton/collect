@@ -18,7 +18,7 @@ type Article struct {
 
 func (art *Article) Purge() {
 	art.parse()
-	// art.replaceImage()
+	art.replaceImage()
 }
 
 func (art *Article) parse() {

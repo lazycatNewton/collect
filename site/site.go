@@ -50,7 +50,6 @@ func Collect(domain string) (*article.Article, error) {
 		return nil, fmt.Errorf("%s is not support", domain)
 	}
 
-	fmt.Println(domain)
 	r, e := getSite(fmt.Sprintf(domain))
 	if e != nil {
 		return nil, e
@@ -72,22 +71,20 @@ func Collect(domain string) (*article.Article, error) {
 		}
 	})
 
+	doc.Find(s.ImgSelector).Each(func(i int, selection *goquery.Selection) {
+		img, ok := selection.Find("a").Attr("href")
+		if ok {
+			img = fmt.Sprintf("![](%v)", img)
+			imgs = imgs + "\n" + img
+		}
+	})
+
 	doc.Find(s.ContentSelector).Each(func(i int, selection *goquery.Selection) {
 		converter := md.NewConverter(domain, true, nil)
 		art.Content = converter.Convert(selection)
-	})
 
-	doc.Find(s.ImgSelector).Each(func(i int, selection *goquery.Selection) {
-		img, ok := selection.Find("a").Attr("href")
-		fmt.Println(img)
-		if ok {
-			imgs = imgs + "\n" + img
-		}
-		converter := md.NewConverter(domain, true, nil)
-		art.Content = art.Content + converter.Convert(selection)
+		art.Content = art.Content + imgs
 	})
-
-	fmt.Println(art.Content)
 
 	return &art, nil
 }

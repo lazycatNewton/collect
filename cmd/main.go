@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"go.x2ox.com/sorbifolia/httputils"
 	"strconv"
 	"sync"
+	"time"
 
 	"collect/site"
 )
 
 var (
 	wg sync.WaitGroup
-	mu sync.Mutex
 
 	sites = [][]string{
 		{"https://luxury-product.com/product-category/bags/womens-bags/womens-bags-chanel/page/%v/", "Chanel", "188"},
@@ -41,40 +42,50 @@ func main() {
 		for i := 2; i <= cr.Page; i++ {
 			domain := fmt.Sprintf(cr.Domain, i)
 
-			doTask(domain)
+			tags := []string{cr.Tag}
+
+			doTask(domain, tags)
 
 		}
 	}
 
-	// wg.Wait()
-
+	wg.Wait()
 }
 
-func doTask(domain string) {
-	// wg.Add(1)
-	// go func() {
-	// defer wg.Done()
+func doTask(domain string, tags []string) {
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
 
-	domains, e := site.GetArticleList(domain)
-	if e != nil {
-		return
-	}
-
-	fmt.Println(domains)
-
-	for _, v := range domains {
-		art, err := site.Collect(v)
-		if err != nil {
-			fmt.Println(domain, err)
+		domains, e := site.GetArticleList(domain)
+		if e != nil {
+			return
 		}
 
-		if art.Title == "" {
-			fmt.Println("title is null", domain)
+		for _, v := range domains {
+			art, err := site.Collect(v)
+			if err != nil {
+				fmt.Println(domain, err)
+			}
+
+			if art.Title == "" {
+				fmt.Println("title is null", domain)
+			}
+
+			art.Purge()
+
+			art.Tags = tags
+
+			if err = httputils.Post("https://api-v1.hera.show/api/v1/admin/article/").
+				SetBodyWithEncoder(httputils.JSON(), art).
+				SetContentType(httputils.AppJSON).
+				SetHeader("Authorization", "Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTE2MDIxOTgsImRhdGEiOnsia2V5IjoiSyJ9fQ.z373lI7gUdyK-N9eNDA5XYUaM5RlnZmEKPIVCVMgF6CorNb9ejZz1q8uZERih-MBp6foM7ovUO08pMyp4FKoDg").
+				Request(3, nil, 5*time.Second).DoRelease(); err != nil {
+				fmt.Println("Upload err ", domain, err)
+			}
+
 		}
 
-		art.Purge()
-	}
-
-	// }()
+	}()
 
 }
