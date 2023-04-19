@@ -83,7 +83,7 @@ func Collect(domain string) (*article.Article, error) {
 		converter := md.NewConverter(domain, true, nil)
 		art.Content = converter.Convert(selection)
 
-		art.Content = art.Content + imgs
+		art.Content = art.Content + "\n" + imgs
 	})
 
 	return &art, nil

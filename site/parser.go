@@ -28,7 +28,7 @@ func getSite(url string) (io.Reader, error) {
 			Request(3, func(err error, response *fasthttp.Response) bool {
 				status = response.StatusCode()
 				return err != nil || response.StatusCode() != 200
-			}, 10*time.Second).
+			}, 60*time.Second).
 			ParserData(p).DoRelease()
 	)
 
