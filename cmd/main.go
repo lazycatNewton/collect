@@ -76,10 +76,10 @@ func doTask(domain string, tags []string) {
 
 			art.Tags = tags
 
-			if err = httputils.Post("https://api-v1.hera.show/api/v1/admin/article/").
+			if err = httputils.Post("https://127.0.0.1:80808/api/v1/admin/article/").
 				SetBodyWithEncoder(httputils.JSON(), art).
 				SetContentType(httputils.AppJSON).
-				SetHeader("Authorization", "Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTE2MDIxOTgsImRhdGEiOnsia2V5IjoiSyJ9fQ.z373lI7gUdyK-N9eNDA5XYUaM5RlnZmEKPIVCVMgF6CorNb9ejZz1q8uZERih-MBp6foM7ovUO08pMyp4FKoDg").
+				SetHeader("Authorization", "Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODE4OTc0MDcsImRhdGEiOnsia2V5IjoiSyJ9fQ.fg4H_XQP2FWutQSoSZYSKev-7uaGpwP9vK1t_AIPlRuxmHt6ajnxT_j0f7IDs_wrCxD7Py-sDqUt7NqAkd56BA").
 				Request(3, nil, 5*time.Second).DoRelease(); err != nil {
 				fmt.Println("Upload err ", domain, err)
 			}
