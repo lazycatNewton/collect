@@ -76,7 +76,7 @@ func doTask(domain string, tags []string) {
 
 			art.Tags = tags
 
-			if err = httputils.Post("https://127.0.0.1:80808/api/v1/admin/article/").
+			if err = httputils.Post("https://127.0.0.1:8080/api/v1/admin/article/").
 				SetBodyWithEncoder(httputils.JSON(), art).
 				SetContentType(httputils.AppJSON).
 				SetHeader("Authorization", "Bearer eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODE4OTc0MDcsImRhdGEiOnsia2V5IjoiSyJ9fQ.fg4H_XQP2FWutQSoSZYSKev-7uaGpwP9vK1t_AIPlRuxmHt6ajnxT_j0f7IDs_wrCxD7Py-sDqUt7NqAkd56BA").
